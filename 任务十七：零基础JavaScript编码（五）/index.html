@@ -4,7 +4,48 @@
 <head>
     <meta charset="utf-8">
     <title>IFE JavaScript Task 01</title>
-    <script src="task.js"></script>
+    <!-- <script src="task.js"></script> -->
+    <style>
+        .box {
+            position: relative;
+            max-width: 100%;
+            padding-top: 50%;
+        }
+
+        .inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 20px;
+            padding-top: 20px;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+
+        .day {
+            width: 20%;
+            height: 100px;
+            background-color: #ace;
+            margin: 0 4px;
+        }
+        .week {
+            width: 20%;
+            height: 100px;
+            background-color: #ace;
+            margin: 0 4px;
+        }
+        .month {
+            width: 20%;
+            height: 100px;
+            background-color: #ace;
+            margin: 0 4px;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,6 +64,11 @@
     </fieldset>
 
     <div class="aqi-chart-wrap">
+        <div class="box">
+            <div class="inner">
+                <p>no data</p>    
+            </div>
+        </div>
     </div>
     <script>
         /* 数据格式演示
@@ -82,7 +128,47 @@
          * 渲染图表
          */
         function renderChart() {
+            console.log(pageState)
+            if(pageState.nowSelectCity === -1) return false;
+            var obj = chartData[pageState.nowSelectCity][pageState.nowGraTime]
+            var wrap = document.querySelector('.aqi-chart-wrap')
+            var s = document.createDocumentFragment()
+            var box = document.createElement('div')
+            box.className = 'box'
+            var inner = document.createElement('div')
+            inner.className = 'inner'
+            box.appendChild(inner)
+            var maxHeight = 500
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    let element
+                    if(pageState.nowGraTime !=='day') {
+                        element = mid(obj[key])
+                    } else {
+                        element = obj[key];
+                    }
+                    var span = document.createElement('span')
+                    span.className = pageState.nowGraTime
+                    span.setAttribute('title', '时间:'+ key + ';质量:' + element)
+                    span.style.height = cssHeight(element) * 100 + '%'
+                    s.appendChild(span)
+                }
+            }
+            inner.appendChild(s)
+            wrap.innerHTML = ''
+            wrap.appendChild(box)
+            function cssHeight(height) {
+                var height = height > 500?500:height
+                return height / maxHeight
 
+            }
+
+            function mid(arr) {
+                var sum = arr.reduce(function(pre,curr,index) {
+                    return pre + curr
+                }, 0)
+                return sum / arr.length
+            }
         }
 
         /**
@@ -90,10 +176,12 @@
          */
         function graTimeChange() {
             // 确定是否选项发生了变化 
-
+            var e = e || window.event
+            var t = e.target
             // 设置对应数据
-
+            pageState.nowGraTime = t.value
             // 调用图表渲染函数
+            renderChart()
         }
 
         /**
@@ -101,17 +189,21 @@
          */
         function citySelectChange() {
             // 确定是否选项发生了变化 
-
+            var e = e || window.event
+            var t = e.target
             // 设置对应数据
-
+            pageState.nowSelectCity = t.value
             // 调用图表渲染函数
+            renderChart()
         }
 
         /**
          * 初始化日、周、月的radio事件，当点击时，调用函数graTimeChange
          */
         function initGraTimeForm() {
-
+            var group = document.querySelector('#form-gra-time')
+            var input = document.querySelector('input')
+            group.addEventListener('change', graTimeChange)
         }
 
         /**
@@ -120,16 +212,18 @@
         function initCitySelector() {
             // 读取aqiSourceData中的城市，然后设置id为city-select的下拉列表中的选项
             var select = document.querySelector('#city-select')
-            var str = ''
+            var str = '<option value="-1" disabled selected style="display: none;">请选择</option>'
+            var index = 0
             for (const key in aqiSourceData) {
                 if (aqiSourceData.hasOwnProperty(key)) {
                     const element = aqiSourceData[key];
-                    str += '<option>' + key + '</option>'
+                    str += '<option value="'+ key +'">' + key + '</option>'
+                    index++
                 }
             }
             select.innerHTML = str
             // 给select设置事件，当选项发生变化时调用函数citySelectChange
-
+            select.addEventListener('change', citySelectChange)
         }
 
         /**
@@ -138,6 +232,52 @@
         function initAqiChartData() {
             // 将原始的源数据处理成图表需要的数据格式
             // 处理好的数据存到 chartData 中
+            for (const key in aqiSourceData) {
+                if (aqiSourceData.hasOwnProperty(key)) {
+                    const element = aqiSourceData[key];
+                    chartData[key] = {
+                        day: element,
+                        week: toWeek(element),
+                        month: toMonth(element)
+                    }
+                }
+            }
+
+            function toWeek(obj) {
+                var result = {}
+                var index = 0
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const element = obj[key];
+                        var newkey = key.split('-')[1]
+                        if (result[index] == null) {
+                            result[index] = [element]
+                        } else {
+                            result[index].push(element)
+                            if(result[index].length >=7) {
+                                index++
+                            }
+                        }
+                    }
+                }
+                return result
+            }
+            function toMonth(obj) {
+                var result = {}
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const element = obj[key];
+                        var newkey = key.split('-')[1]
+                        if(result[newkey] == null) {
+                            result[newkey] = [element]
+                        }else {
+                            result[newkey].push(element)
+                        }
+                    }
+                }
+                return result
+            }
+            console.log(chartData);
         }
 
         /**

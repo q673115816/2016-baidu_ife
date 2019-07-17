@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        ul {
+            padding-top: 30px;
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        li {
+            margin: 0 4px;
+            width: 20px;
+            background-color: #ace;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="mumber" min="10" max="100">
+        <p>
+            <button id="add_left">左侧入</button>
+            <button id="add_right">右侧入</button>
+            <button id="desc_left">左侧出</button>
+            <button id="desc_right">右侧出</button>
+            <button id="bubb">冒泡</button>
+        </p>
+        <ul>
+        </ul>
+    </div>
+    <script>
+        ; (function () {
+            var input = document.querySelector('input')
+            var ul = document.querySelector('ul')
+            var p = document.querySelector('p')
+            var arr = [
+                99, 22, 55, 44, 66, 88, 33, 11
+            ]
+
+            var haddle = {
+                add_left: function () {
+                    if (arr.length >= 60) {
+                        alert('多了')
+                        return
+                    };
+                    var val = this.judge()
+                    if (!val) {
+                        console.log('请输入正确的值')
+                        return false;
+                    }
+                    arr.unshift(val)
+                    this.update()
+                },
+                add_right: function () {
+                    if (arr.length >= 60) {
+                        alert('多了')
+                        return
+                    };
+                    var val = this.judge()
+                    if (!val) {
+                        console.log('请输入正确的值')
+                        return false;
+                    }
+                    arr.push(val)
+                    this.update()
+                },
+                desc_left: function () {
+                    arr.shift()
+                    this.update()
+                },
+                desc_right: function () {
+                    arr.pop()
+                    this.update()
+                },
+                del: function (index) {
+                    arr.splice(index, 1)
+                    this.update()
+                },
+                judge: function () {
+                    var min = input.min
+                    var max = input.max
+                    var val = parseInt(input.value.trim())
+                    input.value = ''
+                    if (val > max || val < min) {
+                        return
+                    }
+                    return val
+                },
+                update: function () {
+                    var wrap = document.createDocumentFragment()
+                    arr.forEach(function (ele, index) {
+                        var li = document.createElement('li')
+                        li.setAttribute('data-key', index)
+                        li.style.height = ele + 'px'
+                        wrap.appendChild(li)
+                    })
+                    ul.innerHTML = ''
+                    ul.appendChild(wrap)
+                },
+                bubb: function () {
+                    var save;
+                    var i = arr.length - 1
+                    var j = 0
+                    again()
+                    function again() {
+                        setTimeout(function () {
+                            if (arr[j] > arr[j + 1]) {
+                                save = arr[j]
+                                arr[j] = arr[j + 1]
+                                arr[j + 1] = save
+                            }
+                            haddle.update()
+                            j++
+                            if(i > 0) {
+                                if (j < i) {
+                                } else {
+                                    j = 0
+                                    i--
+                                }
+                                again()
+                            }
+                        }, 100)
+                    }
+                }
+            }
+
+            haddle.update()
+
+            p.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+                if (t.nodeName === 'BUTTON') {
+                    haddle[t.id]()
+                }
+            })
+            ul.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+                if (t.nodeName === 'LI') {
+                    var index = t.dataset.key
+                    haddle.del(index)
+                }
+            })
+        })();
+    </script>
+</body>
+
+</html>

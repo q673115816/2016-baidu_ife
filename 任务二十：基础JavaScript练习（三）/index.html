@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        ul {
+            padding-top: 30px;
+        }
+
+        li {
+            float: left;
+            margin: 20px;
+            line-height: 40px;
+            color: #ace;
+            font-size: 48px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <textarea name="" id="" cols="30" rows="10" class="inp"></textarea>
+        <p>
+            <button id="add_left">左侧入</button>
+            <button id="add_right">右侧入</button>
+            <button id="desc_left">左侧出</button>
+            <button id="desc_right">右侧出</button>
+            <button id="search">查询</button>
+        </p>
+        <input type="text" class="search">
+        <ul>
+        </ul>
+    </div>
+    <script>
+        ; (function () {
+            var input = document.querySelector('.inp')
+            var ul = document.querySelector('ul')
+            var p = document.querySelector('p')
+            var search = document.querySelector('.search')
+            var arr = ['da', 'dadada', 'dageda', 'ge']
+
+            var haddle = {
+                add_left: function () {
+                    var val = this.judge()
+                    if (!val) {
+                        console.log('请输入正确的值')
+                        return false;
+                    }
+                    arr.unshift(val)
+                    this.update()
+                },
+                add_right: function () {
+                    var val = this.judge()
+                    if (!val) {
+                        console.log('请输入正确的值')
+                        return false;
+                    }
+                    arr.push(val)
+                    this.update()
+                },
+                desc_left: function () {
+                    arr.shift()
+                    this.update()
+                },
+                desc_right: function () {
+                    arr.pop()
+                    this.update()
+                },
+                del: function (index) {
+                    arr.splice(index, 1)
+                    this.update()
+                },
+                search: function() {
+                    this.update()
+                    var val = search.value.trim()
+                    search.value = ''
+                    var lis = ul.querySelectorAll('li')
+                    var reg = new RegExp(val, 'ig')
+                    console.log(lis);
+                    
+                    arr.forEach(function(ele, index) {
+                        if(reg.exec(ele)) {
+                            lis[index].innerHTML = ele.replace(reg, '<span style="color: #f00;">'+ val +'</span>')
+                        }
+                    })
+                },
+                judge: function () {
+                    var val = input.value.trim()
+                    input.value = ''
+                    return val
+                },
+                update: function () {
+                    var wrap = document.createDocumentFragment()
+                    arr.forEach(function (ele, index) {
+                        var text = document.createTextNode(ele)
+                        var li = document.createElement('li')
+                        li.setAttribute('data-key', index)
+                        li.appendChild(text)
+                        wrap.appendChild(li)
+                    })
+                    ul.innerHTML = ''
+                    ul.appendChild(wrap)
+                }
+            }
+
+            haddle.update()
+            p.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+                if (t.nodeName === 'BUTTON') {
+                    haddle[t.id]()
+                }
+            })
+            ul.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+                if (t.nodeName === 'LI') {
+                    var index = t.dataset.key
+                    haddle.del(index)
+                }
+            })
+        })();
+    </script>
+</body>
+
+</html>
