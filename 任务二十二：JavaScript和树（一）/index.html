@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            width: 800px;
+            height: 400px;
+            margin: 100px auto;
+            border: 1px solid #f00;
+            display: flex;
+            background-color: #fff;
+        }
+
+        .wrap div {
+            margin: 20px;
+            display: flex;
+            flex: auto;
+            background-color: #fff;
+        }
+
+
+        .wrap>div {
+            border: 1px solid #0f0;
+        }
+
+        .wrap>div>div {
+            border: 1px solid #00f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div>
+            <div></div>
+            <div></div>
+        </div>
+        <div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <p>
+        <button id="b">前序</button>
+        <button id="m">中序</button>
+        <button id="a">后序</button>
+    </p>
+    <script>
+        ; (function () {
+            var p = document.querySelector('p')
+            var haddle = {
+                b: function (node) {
+                    if(!node) {
+                        node = document.querySelector('.wrap')
+                    }
+                    console.dir(root)
+                },
+                m: function () {
+
+                },
+                a: function () {
+
+                },
+                active:function() {
+
+                }
+            }
+            p.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+
+                if (t.nodeName === 'BUTTON') {
+                    haddle[t.id]()
+                }
+            })
+
+
+        })();
+    </script>
+</body>
+
+</html>

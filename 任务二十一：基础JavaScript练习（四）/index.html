@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .tag {
+            overflow: hidden;
+        }
+
+        .tag span {
+            float: left;
+            margin: 10px;
+            padding: 10px;
+            background-color: #000;
+            color: #ace;
+        }
+
+        .like {
+            overflow: hidden;
+
+        }
+        .like span {
+            float: left;
+            margin: 10px;
+            padding: 10px;
+            background-color: #ace;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="tag">
+        <p class="tag"></p>
+        <textarea name="" id="like" cols="30" rows="10"></textarea>
+        <p class="like"></p>
+        <button class="btn">确认</button>
+    </div>
+    <script>
+        function SetAdd(obj) {
+
+
+            this._ele = function () {
+
+                this.reg = null
+                this.val = ''
+                this.arr = []
+                this.inputname = obj.input
+                this.outputname = obj.output
+                this.hasBtn = obj.btn || false
+                this.input = document.querySelector(this.inputname)
+                this.output = document.querySelector(this.outputname)
+                this.btn
+                if (this.hasBtn) {
+                    this.btn = document.querySelector(this.hasBtn)
+                    this.reg = /[，\s]+/g
+                } else {
+                    this.reg = /[，,、\s]+/g
+                }
+            }
+
+            this._bind = function () {
+                if(this.hasBtn) {
+                    this.btn.addEventListener('click', function () {
+                        this._add()
+                    }.bind(this))
+                } else {
+                    this.input.addEventListener('keydown', function() {
+                        var e = e || window.event
+                        this.val = this.input.value
+                        if(e.keyCode === 13) {
+                            this._add()
+                            return false;
+                        }
+                        if (this.reg.test(this.val)) {
+                            this._add()
+                        }
+                    }.bind(this))
+                }
+
+                this.output.addEventListener('click', function () {
+                    var e = e || window.event
+                    var t = e.target
+                    if(t.nodename = 'SPAN') {
+                        var key = t.dataset.key
+                        this.arr.splice(key, 1)
+                        this._update()
+                    }
+                }.bind(this))
+            }
+
+
+            this._add = function() {
+                this.val = this.input.value.trim()
+                if(!this.hasBtn){
+                    this.val.replace(this.reg, '')
+                }
+                console.log(this.val)
+                var arr = this.val.split(this.reg)
+                console.log(arr)
+                this.arr = this.arr.concat(arr)
+                this.val = ''
+                this.input.value = ''
+                this._update()
+            }
+
+            
+
+            this._check = function() {
+            }
+
+
+            this._update = function() {
+                console.log(this.arr);
+                
+                var dom = document.createDocumentFragment()
+                this.arr.forEach(function(e,i) {
+                    var span = document.createElement('span')
+                    span.setAttribute('data-key', i)
+                    var text = document.createTextNode(e)
+                    span.appendChild(text)
+                    dom.appendChild(span)
+                })
+                this.output.innerHTML = ''
+                this.output.appendChild(dom)
+            }
+
+            this._init = function () {
+                this._ele()
+                this._bind()
+            }
+
+            return this._init()
+        }
+
+        new SetAdd({ input: '#tag', output: '.tag'})
+        new SetAdd({ input: '#like', output: '.like', btn: '.btn' })
+    </script>
+</body>
+
+</html>
