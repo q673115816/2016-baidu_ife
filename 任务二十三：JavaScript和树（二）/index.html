@@ -14,7 +14,6 @@
         }
 
         .wrap {
-            width: 800px;
             height: 400px;
             margin: 100px auto;
             padding: 30px;
@@ -47,22 +46,36 @@
 
 <body>
     <div class="wrap">
-        <div>
-            <div>
-                <div></div>
-                <div></div>
+        <div>0
+            <div>1
+                <div>123</div>
+                <div>321</div>
+                <div>23</div>
             </div>
-            <div>
-                <div></div>
-                <div></div>
+            <div>1254
+                <div>42</div>
+                <div>235</div>
+                <div>346</div>
+            </div>
+            <div>345
+                <div>345</div>
+                <div>234</div>
+                <div>75</div>
+            </div>
+        </div>
+        <div>56
+            <div>564
+                <div>809</div>
+                <div>56</div>
+            </div>
+            <div>5645
+                <div>345</div>
+                <div>685678</div>
             </div>
         </div>
         <div>
             <div>
                 <div></div>
-                <div></div>
-            </div>
-            <div>
                 <div></div>
                 <div></div>
             </div>
@@ -70,8 +83,10 @@
     </div>
     <p>
         <button id="b">前序</button>
-        <button id="m">中序</button>
+        <button id="m" disabled>中序</button>
         <button id="a">后序</button>
+        <button id="bfs">层次</button>
+        <input type="search" name="search">
     </p>
     <script>
         ; (function () {
@@ -84,21 +99,33 @@
             var p = document.querySelector('p')
             var handle = {
                 queue: [],
+                link: [],
                 render() {
+                    let search = document.querySelector('[name="search"]').value
+                    handle.link = []
                     for (let i = 0; i < handle.queue.length; i++) {
-                        setTimeout(() => {
+                        let curr = setTimeout(() => {
                             handle.queue[i].style.backgroundColor = rgb()
+                            if(search && handle.queue[i].firstChild.textContent.trim() === search) {
+                                handle.link.forEach(element => {
+                                    clearTimeout(element)
+                                    element = null
+                                });
+                                alert('find')
+                            }
                         }, 500 * i);
-                        setTimeout(() => {
+                        let remove = setTimeout(() => {
                             handle.queue[i].style.backgroundColor = ''
                         }, 500 * i + 500);
+                        handle.link.push(curr, remove)
                     }
                 },
                 b(node) {
                     if (node) {
                         handle.queue.push(node)
-                        handle.b(node.children[0])
-                        handle.b(node.children[1])
+                        for (let child of node.children) {
+                            handle.b(child)
+                        }
                     }
                 },
                 m(node) {
@@ -110,9 +137,24 @@
                 },
                 a: function (node) {
                     if (node) {
-                        handle.a(node.children[0])
-                        handle.a(node.children[1])
+                        for (let child of node.children) {
+                            handle.b(child)
+                        }
                         handle.queue.push(node)
+                    }
+                },
+                bfs(root) {
+                    let stack = [root]
+                    handle.queue = [root]
+                    while (stack.length) {
+                        let len = stack.length
+                        for (let i = 0; i < len; i++) {
+                            let node = stack.shift()
+                            for (let child of node.children) {
+                                stack.push(child)
+                                handle.queue.push(child)
+                            }
+                        }
                     }
                 }
             }

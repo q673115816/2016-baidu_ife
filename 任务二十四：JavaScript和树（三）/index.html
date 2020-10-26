@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            height: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            border: 1px solid #f00;
+            display: flex;
+            background-color: #fff;
+        }
+
+        .wrap div {
+            padding: 20px;
+            display: flex;
+            flex: auto;
+            background-color: #fff;
+            border: 1px solid #0ff;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div>0
+            <div>1
+                <div>123</div>
+                <div>321</div>
+                <div>23</div>
+            </div>
+            <div>1254
+                <div>42</div>
+                <div>235</div>
+                <div>346</div>
+            </div>
+            <div>345
+                <div>345</div>
+                <div>234</div>
+                <div>75</div>
+            </div>
+        </div>
+        <div>56
+            <div>564
+                <div>809</div>
+                <div>56</div>
+            </div>
+            <div>5645
+                <div>345</div>
+                <div>685678</div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+    <p>
+        <button id="b">前序</button>
+        <button id="m" disabled>中序</button>
+        <button id="a">后序</button>
+        <button id="bfs">层次</button>
+        <input type="search" name="search">
+        <button id="del">删除</button>
+        <button id="add">添加</button>
+        <input type="text" id="message">
+    </p>
+    <script>
+        ; (function () {
+            function r(limit) {
+                return Math.random() * limit >>> 0
+            }
+            function rgb() {
+                return `rgb(${r(256)}, ${r(256)}, ${r(256)})`
+            }
+            var p = document.querySelector('p')
+            var handle = {
+                currelement: null,
+                queue: [],
+                link: [],
+                render() {
+                    let search = document.querySelector('[name="search"]').value
+                    handle.link = []
+                    for (let i = 0; i < handle.queue.length; i++) {
+                        let curr = setTimeout(() => {
+                            handle.queue[i].style.backgroundColor = rgb()
+                            if(search && handle.queue[i].firstChild.textContent.trim() === search) {
+                                handle.link.forEach(element => {
+                                    clearTimeout(element)
+                                    element = null
+                                });
+                                alert('find')
+                            }
+                        }, 500 * i);
+                        let remove = setTimeout(() => {
+                            handle.queue[i].style.backgroundColor = ''
+                        }, 500 * i + 500);
+                        handle.link.push(curr, remove)
+                    }
+                },
+                b(node) {
+                    if (node) {
+                        handle.queue.push(node)
+                        for (let child of node.children) {
+                            handle.b(child)
+                        }
+                    }
+                },
+                m(node) {
+                    if (node) {
+                        handle.m(node.children[0])
+                        handle.queue.push(node)
+                        handle.m(node.children[1])
+                    }
+                },
+                a: function (node) {
+                    if (node) {
+                        for (let child of node.children) {
+                            handle.b(child)
+                        }
+                        handle.queue.push(node)
+                    }
+                },
+                bfs(root) {
+                    let stack = [root]
+                    handle.queue = [root]
+                    while (stack.length) {
+                        let len = stack.length
+                        for (let i = 0; i < len; i++) {
+                            let node = stack.shift()
+                            for (let child of node.children) {
+                                stack.push(child)
+                                handle.queue.push(child)
+                            }
+                        }
+                    }
+                },
+                del() {
+                    if(handle.currelement) {
+                        handle.currelement.remove(handle.currelement)
+                        handle.currelement = null
+                    }
+                },
+                add() {
+                    if (handle.currelement) {
+                        const val = document.querySelector('#message').value
+                        if(val) {
+                            let div = document.createElement('div')
+                            div.textContent = val
+                            handle.currelement.append(div)
+                            document.querySelector('#message').value = ''
+                        }
+                    }
+                }
+            }
+            document.addEventListener('click', function () {
+                var e = e || window.event
+                var t = e.target
+                if (handle.currelement) {
+                    handle.currelement.style.backgroundImage = ''
+                }
+                if (t.nodeName === 'BUTTON') {
+                    handle.queue = []
+                    handle[t.id](document.querySelector('.wrap'))
+                    handle.render()
+                } else if(t.nodeName === 'DIV') {
+                    handle.currelement = t
+                    handle.currelement.style.backgroundImage = 'linear-gradient(#fff, #000)'
+                }
+            })
+
+
+        })();
+    </script>
+</body>
+
+</html>

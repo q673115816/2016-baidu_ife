@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="">
+        <input type="text" name="message">
+        <button type="submit">验证</button>
+    </form>
+    <script>
+        const check = (e) => {
+            e.preventDefault()
+            alert(getByteLen(e.target[0].value))
+        }
+        document.querySelector('form').addEventListener('submit', check)
+        function getByteLen(val) {
+            var len = 0;
+            for (var i = 0; i <
+                val.length
+                ; i++) {
+                var
+                    a
+                        =
+                        val
+                            .charAt(i);
+                if (a.match(/[^\x00-\xff]/ig) != null) {
+                    len += 2;
+                }
+                else {
+                    len += 1;
+
+                }
+
+            }
+
+            return len;
+        }
+    </script>
+</body>
+
+</html>

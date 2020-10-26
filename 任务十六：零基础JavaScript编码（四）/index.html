@@ -37,7 +37,58 @@
          *    "上海": 40
          * };
          */
-        var aqiData = {};
+        var aqiData = {
+            北京: 90,
+            上海: 40
+        };
+
+        var sortRule = {
+            dirt: -1,
+            target: 'num'
+        }
+
+        var sortArray = []
+
+
+        Object.defineProperty(sortRule, 'dirt', {
+            enumerable: true,
+            set(value, b, c) {
+                console.log(value, b, c);
+                let newArray = []
+
+                for (let key in aqiData) {
+                    newArray.push({
+                        city: key,
+                        num: aqiData[key]
+                    })
+                }
+
+                newArray.sort((a, b) => {
+                    return value * String
+                        .prototype
+                        .localeCompare
+                        .call(a[sortRule['target']], b[sortRule['target']], 'zh', { numeric: true })
+                })
+                sortArray = newArray
+                console.log(newArray);
+            },
+            get() {
+                return this.dirt
+            }
+        })
+
+        document.addEventListener('click', (e) => {
+            if (e.target.nodeName === 'TH') {
+                let target = e.target.dataset.rank
+                if (sortRule.target === target) {
+                    console.log(sortRule.dirt);
+                    sortRule.dirt = -1 * sortRule.dirt
+                } else {
+                    sortRule.target = target
+                    sortRule.dirt = -1
+                }
+            }
+        })
 
         /**
          * 从用户输入中获取数据，向aqiData中增加一条数据
@@ -48,8 +99,8 @@
             var value = document.querySelector('#aqi-value-input')
             var Ccity = city.value.trim()
             var Cvalue = parseInt(value.value.trim())
-            if(Ccity && Cvalue) {
-                aqiData[Ccity]= Cvalue
+            if (Ccity && Cvalue) {
+                aqiData[Ccity] = Cvalue
                 city.value = ''
                 value.value = ''
             }
@@ -62,11 +113,11 @@
         function renderAqiList() {
             var table = document.querySelector('#aqi-table')
 
-            var str = '<tr><td>城市</td> <td>空气质量</td> <td>操作</td></tr>'
+            var str = '<tr ><th data-rank="city">城市</th> <th data-rank="num">空气质量</th> <td>操作</td></tr>'
             for (const key in aqiData) {
                 if (aqiData.hasOwnProperty(key)) {
                     const element = aqiData[key];
-                    str += '<tr><td>'+ key+ '</td > <td>'+element+'</td> <td><button data-key="'+ key +'">删除</button></td></tr >'
+                    str += '<tr><td>' + key + '</td > <td>' + element + '</td> <td><button data-key="' + key + '">删除</button></td></tr >'
                 }
             }
             table.innerHTML = str
@@ -89,9 +140,9 @@
             // do sth.
             var e = e || window.event
             var t = e.target
-            if(t.tagName === 'BUTTON') {
+            if (t.tagName === 'BUTTON') {
                 var key = t.getAttribute('data-key')
-                delete(aqiData[key])
+                delete (aqiData[key])
             }
 
             renderAqiList();
@@ -105,6 +156,7 @@
             btn.addEventListener('click', addBtnHandle)
             // 想办法给aqi-table中的所有删除按钮绑定事件，触发delBtnHandle函数
             table.addEventListener('click', delBtnHandle)
+            renderAqiList()
         }
 
         init();
