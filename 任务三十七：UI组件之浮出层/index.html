@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            line-height: 1;
+            font-size: 12px;
+        }
+
+        :root {}
+
+        .dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .dialog .mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .dialog .content {
+            --width: 500px;
+            --minwidth: 500px;
+            --maxwidth: 1000px;
+            --height: 300px;
+            --minheight: 300px;
+            --maxheight: 500px;
+            --left: 0;
+            --top: 0;
+            position: relative;
+            width: clamp(var(--minwidth, --width), var(--width), var(--maxwidth, 100%));
+            height: clamp(var(--minheight, --height), var(--height), var(--maxheight, 100%));
+            transform: translate(var(--left), var(--top));
+            background-color: #fff;
+            border-radius: 10px;
+            border: 1px solid #ace;
+            box-shadow: 0 0 10px #acee;
+            user-select: none;
+        }
+
+        .dialog .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            text-decoration: none;
+            color: #999;
+            font-size: 24px;
+        }
+
+        .dialog .header {
+            height: 40px;
+            line-height: 40px;
+            padding: 0 20px;
+            cursor: move;
+        }
+
+        .dialog .form {
+            margin: 0 auto;
+            margin-top: 20px;
+            width: 300px;
+        }
+
+        .dialog .form .row {
+            margin-bottom: 20px;
+        }
+
+        .dialog .form input {
+            outline: none;
+            width: 100%;
+            height: 48px;
+            border: 1px solid skyblue;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .dialog .form button {
+            cursor: pointer;
+            width: 100%;
+            height: 48px;
+            background-color: skyblue;
+            border: none;
+            color: #fff;
+        }
+
+        .dialog .resize {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            border-right-color: #ace;
+            border-bottom-color: #ace;
+            cursor: nw-resize;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="sginin.style.display = ''">弹出</button>
+    <div class="dialog" id="sginin">
+        <div class="mask"></div>
+        <div class="content">
+            <a href="javascript:;" class="close">×</a>
+            <div class="header">登录</div>
+            <form action="" class="form">
+                <div class="row">
+                    <input type="text" name="username">
+                </div>
+                <div class="row">
+                    <input type="password" name="password">
+                </div>
+                <div class="row">
+                    <button type="submit">登录</button>
+                </div>
+            </form>
+            <div class="resize"></div>
+        </div>
+    </div>
+    <script>
+        function getparents(ele, parent) {
+            let parents = ele
+            while (parents) {
+                if (parents.classList.contains(parent)) {
+                    break
+                }
+                parents = parents.parentNode
+            }
+            return parents
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close')) {
+                let parents = getparents(e.target, 'dialog')
+                if (parents) parents.style.display = 'none'
+            }
+        })
+
+        function center(el) {
+            let fullWidth = window.innerWidth
+            let fullHeight = window.innerHeight
+            let rect = el.getBoundingClientRect()
+            let left = fullWidth / 2 - rect.width / 2
+            let top = fullHeight / 2 - rect.height / 2
+            el.style.setProperty('--top', top + 'px')
+            el.style.setProperty('--left', left + 'px')
+        }
+
+        center(document.querySelector('.dialog .content'))
+
+        window.addEventListener('mousedown', handleContentMove)
+        window.addEventListener('mousedown', handleContentResize)
+        function handleContentMove(e) {
+            if (e.target.classList.contains('header')) {
+                let content = getparents(e.target, 'content')
+                let startX = e.clientX
+                let startY = e.clientY
+                let initialX = content.style.getPropertyValue('--left').slice(0, -2) * 1
+                let initialY = content.style.getPropertyValue('--top').slice(0, -2) * 1
+                let rect = content.getBoundingClientRect()
+
+                let maxLeft = (window.innerWidth - rect.width)
+                let maxTop = (window.innerHeight - rect.height)
+                window.addEventListener('mousemove', handleDrop)
+                window.addEventListener('mouseup', handleRemoveHandle)
+                function handleDrop(e) {
+                    let moveX = e.clientX - startX
+                    let left = initialX * 1 + moveX
+                    let moveY = e.clientY - startY
+                    let top = initialY * 1 + moveY
+                    if (left > maxLeft) left = maxLeft
+                    if (top > maxTop) top = maxTop
+                    content.style.setProperty('--top', top + 'px')
+                    content.style.setProperty('--left', left + 'px')
+                }
+                function handleRemoveHandle() {
+                    // window.removeEventListener('mousedown', handleContentMove)
+                    window.removeEventListener('mousemove', handleDrop)
+                    window.removeEventListener('mouseup', handleRemoveHandle)
+                }
+            }
+        }
+
+        function handleContentResize(e) {
+            if (e.target.classList.contains('resize')) {
+                let content = getparents(e.target, 'content')
+                let startX = e.clientX
+                let startY = e.clientY
+
+                let startWidth = getComputedStyle(content).width.slice(0, -2) * 1
+                let startHeight = getComputedStyle(content).height.slice(0, -2) * 1
+
+                let maxWidth = window.innerWidth - startX + startWidth
+                let maxHeight = window.innerHeight - startY + startHeight
+                content.style.setProperty("--maxwidth", maxWidth + 'px');
+                content.style.setProperty("--maxheight", maxHeight + 'px');
+                window.addEventListener('mousemove', handleResize)
+                window.addEventListener('mouseup', handleRemoveHandle)
+                function handleResize(e) {
+                    let apartX = e.clientX - startX
+                    let apartY = e.clientY - startY
+                    let endWidth = startWidth + apartX
+                    let endHeight = startHeight + apartY
+                    content.style.setProperty("--width", endWidth + 'px');
+                    content.style.setProperty("--height", endHeight + 'px');
+                }
+                function handleRemoveHandle() {
+                    window.removeEventListener('mousemove', handleResize)
+                    window.removeEventListener('mouseup', handleRemoveHandle)
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
