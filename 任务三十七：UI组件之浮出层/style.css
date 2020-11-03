@@ -1,0 +1,103 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            line-height: 1;
+            font-size: 12px;
+        }
+
+        :root {
+            --webviewwidth: 0;
+            --webviewheight: 0;
+
+        }
+
+        .dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .dialog .mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .dialog .content {
+            --width: 500px;
+            --height: 300px;
+            --left: 0;
+            --top: 0;
+            position: relative;
+            width: max(500px, var(--width));
+            height: max(300px, var(--height));
+            transform: translate(max(0px, var(--left)), max(0px, var(--top)));
+            background-color: #fff;
+            border-radius: 10px;
+            border: 1px solid #ace;
+            box-shadow: 0 0 10px #acee;
+            user-select: none;
+        }
+
+        .dialog .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            text-decoration: none;
+            color: #999;
+            font-size: 24px;
+        }
+
+        .dialog .header {
+            height: 40px;
+            line-height: 40px;
+            padding: 0 20px;
+            cursor: move;
+        }
+
+        .dialog .form {
+            margin: 0 auto;
+            margin-top: 20px;
+            width: 300px;
+        }
+
+        .dialog .form .row {
+            margin-bottom: 20px;
+        }
+
+        .dialog .form input {
+            outline: none;
+            width: 100%;
+            height: 48px;
+            border: 1px solid skyblue;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .dialog .form button {
+            cursor: pointer;
+            width: 100%;
+            height: 48px;
+            background-color: skyblue;
+            border: none;
+            color: #fff;
+        }
+
+        .dialog .resize {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            border-right-color: #ace;
+            border-bottom-color: #ace;
+            cursor: nw-resize;
+        }
