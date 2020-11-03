@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script>
+        var data = [
+            {
+                id: '1',
+                name: '小一',
+                eng: 23,
+                math: 45,
+                spart: 67,
+            },
+            {
+                id: '2',
+                name: '小二',
+                eng: 87,
+                math: 345,
+                spart: 12,
+            },
+            {
+                id: '3',
+                name: '小十',
+                eng: 978,
+                math: 606,
+                spart: 2,
+            },
+        ]
+
+        function SortTable(el, data) {
+            this.data = data
+            this.el = document.querySelector(el)
+            this.thlist = []
+            this.data.forEach((tr) => {
+                Object.keys(tr).forEach((key) => {
+                    if (!this.thlist.includes(key)) this.thlist.push(key)
+                })
+            })
+            this.sort = 0
+            this.filter = ''
+            this.init()
+        }
+        
+        SortTable.prototype.init = function () {
+            this.table = document.createElement('table')
+            this.el.append(this.table)
+            this.table.style.textAlign = 'right'
+            this.initTh()
+            this.initTd()
+        }
+
+        SortTable.prototype.initTh = function () {
+            let tr_th = document.createElement('tr')
+            this.thlist.forEach((th) => {
+                let dom = document.createElement('th')
+                dom.textContent = th
+                dom.style.cursor = 'pointer'
+                dom.addEventListener('click', () => {
+                    if (this.filter) {
+                        if (this.filter === dom.textContent) {
+                            this.sort = this.sort * -1
+                        } else {
+                            this.filter = dom.textContent
+                            this.sort = 1
+                        }
+                    } else {
+                        this.filter = dom.textContent
+                        this.sort = 1
+                    }
+                    this.data = this.data.sort((a, b) => String.prototype.localeCompare.call(a[this.filter], b[this.filter], undefined, { numeric: true }) * this.sort)
+                    this.initTd(this.table)
+                })
+                tr_th.append(dom)
+            })
+            this.table.append(tr_th)
+        }
+
+        SortTable.prototype.initTd = function (table) {
+            this.table.querySelectorAll('.tr').forEach(tr => {
+                tr.remove()
+            })
+            for (let i = 0; i < this.data.length; i++) {
+                let tr = document.createElement('tr')
+                tr.classList.add('tr')
+                let student = []
+                for (let j = 0; j < this.thlist.length; j++) {
+                    student[j] = this.data[i][this.thlist[j]]
+                }
+                for (const value of student) {
+                    let dom = document.createElement('td')
+                    dom.textContent = value
+                    tr.append(dom)
+                }
+                this.table.append(tr)
+            }
+        }
+        new SortTable('#root', data)
+    </script>
+</body>
+
+</html>

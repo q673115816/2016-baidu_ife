@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" class="picker">
+    <ul>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+    </ul>
+    <input type="text" class="picker">
+    <ul>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+        <li><br></li>
+    </ul>
+    <script>
+        let options = {
+            start: '',
+            end: '',
+            format: ''
+        }
+        function DatePicker(select, options) {
+            document.querySelectorAll(select).forEach((dom) => {
+                registerPicker(dom)
+            })
+            function registerPicker(dom) {
+                dom.addEventListener('focus', () => {
+                    if (dom.classList.contains('on')) return
+                    dom.classList.add('on')
+                    createPicker(dom)
+                })
+            }
+            function createPicker(dom) {
+                let date = new Date
+                let year = date.getFullYear()
+                let month = date.getMonth()
+                let day = date.getDate()
+                let week = date.getDay()
+                let select = day
+                let selectDom
+                console.log(year, month, day, week);
+                let q = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+                let rect = dom.getBoundingClientRect()
+                let datepicker = document.createElement('div')
+                datepicker.style.width = '420px'
+                datepicker.style.paddingBottom = '30px'
+                datepicker.style.position = 'absolute'
+                datepicker.style.backgroundColor = 'skyblue'
+
+                let header = document.createElement('div')
+                header.style.height = '40px'
+                header.style.lineHeight = '40px'
+                header.style.textAlign = 'center'
+                header.style.padding = '0 20px'
+                let left = document.createElement('span')
+                left.style.position = 'absolute'
+                left.style.top = '0'
+                left.style.left = '20px'
+                left.innerHTML = '&lt;'
+                left.addEventListener('click', () => {
+                    if (month === 0) {
+                        month = 11
+                        year--
+                    } else {
+                        month -= 1
+                    }
+                    center.remove()
+                    center = createCenter()
+                })
+                header.append(left)
+
+                function createCenter() {
+                    let center = document.createElement('span')
+                    center.textContent = year + '-' + (month + 1)
+                    header.append(center)
+                    return center
+                }
+                let center = createCenter()
+                let right = document.createElement('span')
+                right.style.position = 'absolute'
+                right.style.top = '0'
+                right.style.right = '20px'
+                right.innerHTML = '&gt;'
+                right.addEventListener('click', () => {
+                    if (month === 11) {
+                        month = 0
+                        year++
+                    } else {
+                        month += 1
+                    }
+                    center.remove()
+                    center = createCenter()
+                })
+                header.append(right)
+                datepicker.append(header)
+
+                let dom_days = document.createElement('div')
+                dom_days.style.overflow = 'hiddne'
+                for (let i = 0; i < q[month]; i++) {
+                    let day = document.createElement('div')
+                    day.textContent = i + 1
+                    day.style.width = '50px'
+                    day.style.height = '50px'
+                    day.style.lineHeight = '50px'
+                    day.style.textAlign = 'center'
+                    day.style.float = 'left'
+                    day.style.margin = '5px'
+                    day.style.backgroundColor = '#fff'
+                    if (select === i + 1) {
+                        day.style.backgroundColor = '#ace'
+                        selectDom = day
+                    }
+
+                    day.addEventListener('click', () => {
+                        select = day.textContent
+                        selectDom.style.backgroundColor = '#fff'
+                        day.style.backgroundColor = '#ace'
+                        selectDom = day
+                    })
+                    dom_days.append(day)
+                }
+                datepicker.append(dom_days)
+
+                let bar = document.createElement('div')
+                bar.style.position = 'absolute'
+                bar.style.bottom = 0
+                bar.style.left = 0
+                bar.style.right = 0
+                let confirm = document.createElement('button')
+                confirm.textContent = '确定'
+                confirm.style.height = '30px'
+                bar.append(confirm)
+                let cancel = document.createElement('button')
+                cancel.textContent = '取消'
+                cancel.style.height = '30px'
+                cancel.addEventListener('click', () => {
+                    datepicker.remove()
+                    dom.classList.remove('on')
+                })
+                bar.append(cancel)
+                datepicker.append(bar)
+                datepicker.style.top = rect.top + window.scrollY - 300 + 'px'
+                datepicker.style.left = rect.left + window.scrollX + 'px'
+                document.body.append(datepicker)
+            }
+
+            function isLeap(year) {
+                year = Number(year)
+                if (year % 4 === 0 && year % 100 !== 0) {
+                    return true
+                } else if (year % 400 === 0) {
+                    return true
+                }
+                return false
+            }
+        }
+        new DatePicker('.picker')
+    </script>
+</body>
+
+</html>
